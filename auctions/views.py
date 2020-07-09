@@ -196,7 +196,7 @@ def watchlist(request):
                 auctions.append(w.auction)
             auctions = sorted(auctions, key=lambda auction: auction.time, reverse=True)
             
-            return render(request, "auctions/index.html", {
+            return render(request, "auctions/watchlist.html", {
                 "auctions": auctions
             })
         else:
