@@ -17,6 +17,7 @@
         <p>Current Bid Amount: {{ largestAmount }}</p>
     {% endif %}
     <p>Date Posted: {{auction.date}}</p>
+    <p>Seller: {{auction.userPosted.username}}</p>
             
     {% if user.is_authenticated and not isWatched %}
         <form action="{% url 'bid' %}" method="post">

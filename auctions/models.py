@@ -17,6 +17,7 @@ class Auction(models.Model):
     time = models.TimeField(auto_now=True, blank=True)
     imageURL = models.URLField(null=True)
     category = models.CharField(max_length=30, null=True)
+    isActive = models.BooleanField(default=True)
     def __str__(self):
         return self.title + ", " + self.description + ", " + str(self.startingBidAmount)
 

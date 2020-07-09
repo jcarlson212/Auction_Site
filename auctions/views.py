@@ -8,7 +8,7 @@ from .models import User, Auction, Bid, Comment, WatchListEntry
 
 
 def index(request):
-    auctions = sorted(Auction.objects.all(), key=lambda auction: auction.time, reverse=True)
+    auctions = sorted(Auction.objects.filter(isActive=True), key=lambda auction: auction.time, reverse=True)
     return render(request, "auctions/index.html", {
         "auctions": auctions
     })
@@ -114,12 +114,19 @@ def createListing(request):
 
 def listing(request, id):
     auction = Auction.objects.get(id=id)
+    isWatched = False
+    isPoster = False
     if request.user.is_authenticated:
         current_user = User.objects.filter(username=request.user.username)[0]
-        isPoster = False
-        if auction.userPosted == current_user:
+
+        if auction.userPosted.username == current_user.username:
             isPoster = True
+        
         bids = Bid.objects.filter(auction=auction)
+
+        if len(WatchListEntry.objects.filter(user=current_user).filter(auction=auction)) > 0:
+            isWatched = True
+
         if len(bids) > 0:
             #find largest bid
             largest = bids[0]
@@ -128,21 +135,21 @@ def listing(request, id):
                     largest = bids[i]
             return render(request, "auctions/listing.html", {
                 "auction": auction,
-                "isWatched": True,
+                "isWatched": isWatched,
                 "largestAmount": largest.amount,
                 "isPoster": isPoster
             }) 
-        if len(WatchListEntry.objects.filter(user=current_user).filter(auction=auction)) > 0:
-            return render(request, "auctions/listing.html", {
-                "auction": auction,
-                "isWatched": True,
-                "isPoster": isPoster
-            })
+        
+        return render(request, "auctions/listing.html", {
+            "auction": auction,
+            "isWatched": isWatched,
+            "isPoster": isPoster
+        })
         
     return render(request, "auctions/listing.html", {
         "auction": auction,
-        "isWatched": False,
-        "isPoster": False
+        "isWatched": isWatched,
+        "isPoster": isPoster
     })
 
 def watchlist(request):
@@ -192,9 +199,13 @@ def close(request):
     if request.method == "POST":
         userid = request.POST["userid"]
         auctionid = request.POST["auctionid"]
-        user = User.objects.get(id=userid)
         auction = Auction.objects.get(id=auctionid)
+        user = User.objects.get(id=userid)
+        if user == auction.userPosted:
+            auction.isActive = False
+            auction.save()
+            return HttpResponse("Auction closed")
+        else:
+            return HttpResponse("You are not the person that posted this bid!")
 
-        return HttpResponse("Auction closed")
-        
     return HttpResponse("Error: no get requests")
