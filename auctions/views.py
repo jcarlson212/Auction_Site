@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Auction, Bid, Comment, WatchListEntry
+from .models import User, Auction, Bid, Comment, WatchListEntry, Comment
 
 
 def index(request):
@@ -65,6 +65,18 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+def comment(request):
+    if request.method == "POST":
+        userid = request.POST["userid"]
+        auctionid = request.POST["auctionid"]
+        user = User.objects.get(id=userid)
+        auction = Auction.objects.get(id=auctionid)
+        newComment = Comment(user=user, auction=auction, comment=request.POST["comment"])
+        newComment.save()
+        return HttpResponse("success")
+    else:
+        return HttpResponse("No GET method allowed")
+
 def createListing(request):
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -114,6 +126,7 @@ def createListing(request):
 
 def listing(request, id):
     auction = Auction.objects.get(id=id)
+    comments = Comment.objects.filter(auction=auction)
     isWatched = False
     isPoster = False
     if request.user.is_authenticated:
@@ -137,19 +150,22 @@ def listing(request, id):
                 "auction": auction,
                 "isWatched": isWatched,
                 "largestAmount": largest.amount,
-                "isPoster": isPoster
+                "isPoster": isPoster,
+                "comments": comments
             }) 
         
         return render(request, "auctions/listing.html", {
             "auction": auction,
             "isWatched": isWatched,
-            "isPoster": isPoster
+            "isPoster": isPoster,
+            "comments": comments
         })
         
     return render(request, "auctions/listing.html", {
         "auction": auction,
         "isWatched": isWatched,
-        "isPoster": isPoster
+        "isPoster": isPoster,
+        "comments": comments
     })
 
 def watchlist(request):

@@ -18,6 +18,25 @@
     {% endif %}
     <p>Date Posted: {{auction.date}}</p>
     <p>Seller: {{auction.userPosted.username}}</p>
+
+    <hr>
+    {% for comment in comments %}
+        <h5>{{comment.user.username}}</h5>
+        <p>{{comment.comment}}</p>
+    {% empty %}
+    No comments.
+    {% endfor %}
+    <hr>
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'comment' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ user.id }}" name="userid">
+            <input type="hidden" value="{{ auction.id }}" name="auctionid">
+            <textarea name="comment">Comment...</textarea>
+            <input type="submit" value="Add Comment">
+        </form>
+    {% endif %}
             
     {% if user.is_authenticated and not isWatched %}
         <form action="{% url 'bid' %}" method="post">
@@ -69,5 +88,7 @@
     {% else %}
         Not signed in.
     {% endif %}
+
+
 
 {% endblock %}
