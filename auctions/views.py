@@ -8,7 +8,7 @@ from .models import User, Auction, Bid, Comment
 
 
 def index(request):
-    auctions = Auction.objects.all()
+    auctions = sorted(Auction.objects.all(), key=lambda auction: auction.time, reverse=True)
     return render(request, "auctions/index.html", {
         "auctions": auctions
     })
@@ -75,6 +75,35 @@ def createListing(request):
                 startingBidAmount=request.POST["startingBidAmount"],
                 userPosted=current_user
             )
+            if request.POST["imageURL"] != '':
+                if request.POST["category"] != '':
+                    auction = Auction(
+                        title=request.POST["title"],
+                        description=request.POST["description"],
+                        startingBidAmount=request.POST["startingBidAmount"],
+                        userPosted=current_user,
+                        imageURL= request.POST["imageURL"],
+                        category=request.POST["category"]
+                    )
+                else:
+                    auction = Auction(
+                        title=request.POST["title"],
+                        description=request.POST["description"],
+                        startingBidAmount=request.POST["startingBidAmount"],
+                        userPosted=current_user,
+                        imageURL= request.POST["imageURL"]
+                    )
+
+            elif request.POST["category"] != '':
+                auction = Auction(
+                    title=request.POST["title"],
+                    description=request.POST["description"],
+                    startingBidAmount=request.POST["startingBidAmount"],
+                    userPosted=current_user,
+                    category=request.POST["category"]
+                )
+
+
             auction.save()
             print(Auction.objects.all())
             return HttpResponse("success")

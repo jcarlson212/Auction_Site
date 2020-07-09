@@ -7,9 +7,10 @@
     <form action="{% url 'createListing' %}" method="post">
         <input type="text" placeholder="Title" name="title">
         <input type="text" placeholder="Description" name="description">
-        <input type="number" name="startingBidAmount">
+        <input type="number" name="startingBidAmount" step="0.01" min="0" placeholder="starting bid amount">
         <label for="imageURL">(Optional):</label>
-        <input type="url" name="imageURL" id="imageURL">
+        <input type="url" name="imageURL" id="imageURL" placeholder="image URL">
+        <input type="text" name="category" id="category" placeholder="category">
         <input type="submit">
         {% csrf_token %}
     </form>

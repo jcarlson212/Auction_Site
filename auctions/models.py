@@ -8,6 +8,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username + ", " + self.email
 
+
 class Auction(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
@@ -15,10 +16,12 @@ class Auction(models.Model):
     currentAmount = models.FloatField(null=True)
     userPosted = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True, blank=True)
+    time = models.TimeField(auto_now=True, blank=True)
     imageURL = models.URLField(null=True)
     category = models.CharField(max_length=30, null=True)
     def __str__(self):
         return self.title + ", " + self.description + ", " + str(self.startingBidAmount)
+
 
 class Bid(models.Model):
     userPosted = models.ForeignKey(User, on_delete=models.CASCADE)
