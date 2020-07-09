@@ -8,7 +8,10 @@ from .models import User, Auction, Bid, Comment
 
 
 def index(request):
-    return render(request, "auctions/index.html")
+    auctions = Auction.objects.all()
+    return render(request, "auctions/index.html", {
+        "auctions": auctions
+    })
 
 
 def login_view(request):
@@ -65,15 +68,17 @@ def register(request):
 def createListing(request):
     if request.method == "POST":
         if request.user.is_authenticated:
+            current_user = User.objects.filter(username=request.user.username)[0]
             auction = Auction(
                 title=request.POST["title"],
                 description=request.POST["description"],
                 startingBidAmount=request.POST["startingBidAmount"],
-                userPosted=request.user,
-
+                userPosted=current_user
             )
+            auction.save()
+            print(Auction.objects.all())
             return HttpResponse("success")
         else:
             return HttpResponse("failure")
-            
+
     return render(request, "auctions/createListing.html")

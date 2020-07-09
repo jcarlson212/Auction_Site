@@ -10,6 +10,8 @@
         <input type="number" name="startingBidAmount">
         <label for="imageURL">(Optional):</label>
         <input type="url" name="imageURL" id="imageURL">
+        <input type="submit">
+        {% csrf_token %}
     </form>
 
 {% endblock %}

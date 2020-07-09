@@ -3,5 +3,19 @@
 {% block body %}
     <h2>Active Listings</h2>
 
-    TODO
+    <ul>
+        {% for auction in auctions %}
+        <li>
+            <h5>{{auction.title}}</h5>
+            <p>Description: {{auction.description}}</p>
+            <p>Starting Bid Amount: {{auction.startingBidAmount}}</p>
+            <p>Date Posted: {{auction.date}}</p>
+        </li>
+        {% empty %}
+        No auctions have been posted...
+        {% endfor %}
+
+    </ul>
+    
+
 {% endblock %}
