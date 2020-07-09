@@ -13,7 +13,7 @@ class Auction(models.Model):
     description = models.CharField(max_length=300)
     startingBidAmount = models.FloatField()
     currentAmount = models.FloatField(null=True)
-    userPosted = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    userPosted = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True, blank=True)
     imageURL = models.URLField(null=True)
     category = models.CharField(max_length=30, null=True)
@@ -21,17 +21,17 @@ class Auction(models.Model):
         return self.title + ", " + self.description + ", " + str(self.startingBidAmount)
 
 class Bid(models.Model):
-    userPosted = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    userPosted = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.FloatField()
-    auction = models.ForeignKey(Auction, on_delete=models.DO_NOTHING)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True, blank=True)
     def __str__(self):
         return "bid: " + str(self.amount) + ", " + str(self.date)
 
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    auction = models.ForeignKey(Auction, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
     comment = models.CharField(max_length=300)
     date = models.DateField(auto_now_add=True, blank=True)
     def __str__(self):
