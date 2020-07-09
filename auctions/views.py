@@ -116,6 +116,9 @@ def listing(request, id):
     auction = Auction.objects.get(id=id)
     if request.user.is_authenticated:
         current_user = User.objects.filter(username=request.user.username)[0]
+        isPoster = False
+        if auction.userPosted == current_user:
+            isPoster = True
         bids = Bid.objects.filter(auction=auction)
         if len(bids) > 0:
             #find largest bid
@@ -126,17 +129,20 @@ def listing(request, id):
             return render(request, "auctions/listing.html", {
                 "auction": auction,
                 "isWatched": True,
-                "largestAmount": largest.amount
+                "largestAmount": largest.amount,
+                "isPoster": isPoster
             }) 
         if len(WatchListEntry.objects.filter(user=current_user).filter(auction=auction)) > 0:
             return render(request, "auctions/listing.html", {
                 "auction": auction,
-                "isWatched": True
+                "isWatched": True,
+                "isPoster": isPoster
             })
         
     return render(request, "auctions/listing.html", {
         "auction": auction,
-        "isWatched": False
+        "isWatched": False,
+        "isPoster": False
     })
 
 def watchlist(request):
@@ -168,8 +174,27 @@ def bid(request):
         user = User.objects.get(id=userid)
         auction = Auction.objects.get(id=auctionid)
         amount = request.POST["amount"]
+        bids = Bid.objects.filter(auction=auction)
+        if auction.startingBidAmount > float(amount):
+            return HttpResponse("Error: Bid not larger than starting bid")
+        if len(bids) > 0:
+            for bid in bids:
+                if bid.amount >= float(amount):
+                    return HttpResponse("Error: Bid not larger than the current bid")
+        
         newBid = Bid(userPosted=user, amount=amount, auction=auction)
         newBid.save()
         return HttpResponse("New bid made")
     else:
         return HttpResponse("page does not exist")
+
+def close(request):
+    if request.method == "POST":
+        userid = request.POST["userid"]
+        auctionid = request.POST["auctionid"]
+        user = User.objects.get(id=userid)
+        auction = Auction.objects.get(id=auctionid)
+
+        return HttpResponse("Auction closed")
+        
+    return HttpResponse("Error: no get requests")

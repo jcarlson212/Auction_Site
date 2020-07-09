@@ -33,6 +33,15 @@
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
             <input type="submit" name="Add to Watchlist" value="Add to Watchlist">
         </form>
+
+        {% if isPoster %}
+            <form action="{% url 'close' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" value="{{ user.id }}" name="userid">
+                <input type="hidden" value="{{ auction.id }}" name="auctionid">
+                <input type="submit" name="Close" value="Close">
+            </form>
+        {% endif %}
     {% elif user.is_authenticated %}
         <form action="{% url 'bid' %}" method="post">
             {% csrf_token %}
@@ -48,6 +57,14 @@
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
             <input type="submit" name="Remove from Watchlist" value="Remove from Watchlist">
         </form>
+        {% if isPoster %}
+            <form action="{% url 'close' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" value="{{ user.id }}" name="userid">
+                <input type="hidden" value="{{ auction.id }}" name="auctionid">
+                <input type="submit" name="Close" value="Close">
+            </form>
+        {% endif %}
     {% else %}
         Not signed in.
     {% endif %}
