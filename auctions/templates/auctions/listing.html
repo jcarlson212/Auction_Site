@@ -18,12 +18,19 @@
     {% endif %}
     <p>Date Posted: {{auction.date}}</p>
             
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and not isWatched %}
         <form action="{% url 'watchlist' %}" method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ user.id }}" name="userid">
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
             <input type="submit" name="Add to Watchlist" value="Add to Watchlist">
+        </form>
+    {% elif user.is_authenticated %}
+        <form action="{% url 'watchlist' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ user.id }}" name="userid">
+            <input type="hidden" value="{{ auction.id }}" name="auctionid">
+            <input type="submit" name="Remove from Watchlist" value="Remove from Watchlist">
         </form>
     {% else %}
         Not signed in.

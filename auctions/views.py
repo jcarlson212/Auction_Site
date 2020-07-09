@@ -114,8 +114,17 @@ def createListing(request):
 
 def listing(request, id):
     auction = Auction.objects.get(id=id)
+    if request.user.is_authenticated:
+        current_user = User.objects.filter(username=request.user.username)[0]
+        if len(WatchListEntry.objects.filter(user=current_user).filter(auction=auction)) > 0:
+            return render(request, "auctions/listing.html", {
+                "auction": auction,
+                "isWatched": True
+            })
+        
     return render(request, "auctions/listing.html", {
-        "auction": auction
+        "auction": auction,
+        "isWatched": False
     })
 
 def watchlist(request):
@@ -132,6 +141,10 @@ def watchlist(request):
             )
             newEntry.save()
             return HttpResponse("Added new watchlist entry")
-        return HttpResponse("Nothing added to watchlist")
+        else:
+            #we remove it
+            WatchListEntry.objects.filter(user=user).filter(auction=auction).delete()
+
+            return HttpResponse("Deleted")
     else:
         return HttpResponse("page does not exist")
