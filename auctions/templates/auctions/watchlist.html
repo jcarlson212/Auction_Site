@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+
+    <ul>
+        {% for auction in auctions %}
+        <li>
+            <h5><a href="{% url 'listing' auction.id %}">{{auction.title}}</a></h5>
+            {% if auction.imageURL != null %}
+                <img src={{auction.imageURL}}>
+            {% endif %}
+            {% if auction.category != null %}
+                <p>Category: {{ auction.category }}</p>
+            {% endif %}
+                <p>Description: {{auction.description}}</p>
+            {% if auction.currentAmount == null %}
+                <p>Starting Bid Amount: {{auction.startingBidAmount}}</p>
+            {% else %}
+                <p>Current Bid Amount: {{auction.currentAmount}}</p>
+            {% endif %}
+            <p>Date Posted: {{auction.date}}</p>
+            
+        </li>
+        {% empty %}
+        No auctions have been posted...
+        {% endfor %}
+
+    </ul>
+    
+
+{% endblock %}

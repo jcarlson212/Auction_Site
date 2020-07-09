@@ -171,6 +171,20 @@ def watchlist(request):
             WatchListEntry.objects.filter(user=user).filter(auction=auction).delete()
 
             return HttpResponse("Deleted")
+    elif request.method == "GET":
+        if request.user.is_authenticated:
+            current_user = User.objects.filter(username=request.user.username)[0]
+            watched = WatchListEntry.objects.filter(user=current_user)
+            auctions = []
+            for w in watched:
+                auctions.append(w.auction)
+            auctions = sorted(auctions, key=lambda auction: auction.time, reverse=True)
+            
+            return render(request, "auctions/index.html", {
+                "auctions": auctions
+            })
+        else:
+            return HttpResponse("User not signed in...")
     else:
         return HttpResponse("page does not exist")
 
