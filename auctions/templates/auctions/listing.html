@@ -2,6 +2,7 @@
 
 {% block body %}
 
+
     <h2>{{auction.title}}</h2>
     {% if auction.imageURL != null %}
         <img src={{auction.imageURL}}>
@@ -17,4 +18,15 @@
     {% endif %}
     <p>Date Posted: {{auction.date}}</p>
             
+    {% if user.is_authenticated %}
+        <form action="{% url 'watchlist' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ user.id }}" name="userid">
+            <input type="hidden" value="{{ auction.id }}" name="auctionid">
+            <input type="submit" name="Add to Watchlist" value="Add to Watchlist">
+        </form>
+    {% else %}
+        Not signed in.
+    {% endif %}
+
 {% endblock %}

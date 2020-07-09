@@ -8,7 +8,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username + ", " + self.email
 
-
 class Auction(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
@@ -22,6 +21,11 @@ class Auction(models.Model):
     def __str__(self):
         return self.title + ", " + self.description + ", " + str(self.startingBidAmount)
 
+class WatchListEntry(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
+    def __str__(self):
+        return str(self.user) + ", " + str(self.auction)
 
 class Bid(models.Model):
     userPosted = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -31,7 +35,6 @@ class Bid(models.Model):
     def __str__(self):
         return "bid: " + str(self.amount) + ", " + str(self.date)
 
-
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE)
@@ -40,6 +43,3 @@ class Comment(models.Model):
     def __str__(self):
         return "comment: " + self.comment + ", " + str(self.date)
 
-
-allUsers = User.objects.all()
-print(allUsers)

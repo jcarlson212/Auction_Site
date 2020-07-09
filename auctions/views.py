@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Auction, Bid, Comment
+from .models import User, Auction, Bid, Comment, WatchListEntry
 
 
 def index(request):
@@ -117,3 +117,21 @@ def listing(request, id):
     return render(request, "auctions/listing.html", {
         "auction": auction
     })
+
+def watchlist(request):
+    if request.method == "POST":
+        userid = request.POST["userid"]
+        auctionid = request.POST["auctionid"]
+        user = User.objects.get(id=userid)
+        auction = Auction.objects.get(id=auctionid)
+        if len(WatchListEntry.objects.filter(user=user).filter(auction=auction)) == 0:
+            #we then add it to the watchlist
+            newEntry = WatchListEntry(
+                user=user,
+                auction=auction
+            )
+            newEntry.save()
+            return HttpResponse("Added new watchlist entry")
+        return HttpResponse("Nothing added to watchlist")
+    else:
+        return HttpResponse("page does not exist")
