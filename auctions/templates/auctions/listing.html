@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <h2>{{auction.title}}</h2>
+    {% if auction.imageURL != null %}
+        <img src={{auction.imageURL}}>
+    {% endif %}
+    {% if auction.category != null %}
+        <p>Category: {{ auction.category }}</p>
+    {% endif %}
+        <p>Description: {{auction.description}}</p>
+    {% if auction.currentAmount == null %}
+        <p>Starting Bid Amount: {{auction.startingBidAmount}}</p>
+    {% else %}
+        <p>Current Bid Amount: {{auction.currentAmount}}</p>
+    {% endif %}
+    <p>Date Posted: {{auction.date}}</p>
+            
+{% endblock %}

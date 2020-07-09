@@ -111,3 +111,9 @@ def createListing(request):
             return HttpResponse("failure")
 
     return render(request, "auctions/createListing.html")
+
+def listing(request, id):
+    auction = Auction.objects.get(id=id)
+    return render(request, "auctions/listing.html", {
+        "auction": auction
+    })
