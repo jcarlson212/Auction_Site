@@ -116,6 +116,18 @@ def listing(request, id):
     auction = Auction.objects.get(id=id)
     if request.user.is_authenticated:
         current_user = User.objects.filter(username=request.user.username)[0]
+        bids = Bid.objects.filter(auction=auction)
+        if len(bids) > 0:
+            #find largest bid
+            largest = bids[0]
+            for i in range(0, len(bids)):
+                if bids[i].amount > largest.amount:
+                    largest = bids[i]
+            return render(request, "auctions/listing.html", {
+                "auction": auction,
+                "isWatched": True,
+                "largestAmount": largest.amount
+            }) 
         if len(WatchListEntry.objects.filter(user=current_user).filter(auction=auction)) > 0:
             return render(request, "auctions/listing.html", {
                 "auction": auction,
@@ -146,5 +158,18 @@ def watchlist(request):
             WatchListEntry.objects.filter(user=user).filter(auction=auction).delete()
 
             return HttpResponse("Deleted")
+    else:
+        return HttpResponse("page does not exist")
+
+def bid(request):
+    if request.method == "POST":
+        userid = request.POST["userid"]
+        auctionid = request.POST["auctionid"]
+        user = User.objects.get(id=userid)
+        auction = Auction.objects.get(id=auctionid)
+        amount = request.POST["amount"]
+        newBid = Bid(userPosted=user, amount=amount, auction=auction)
+        newBid.save()
+        return HttpResponse("New bid made")
     else:
         return HttpResponse("page does not exist")

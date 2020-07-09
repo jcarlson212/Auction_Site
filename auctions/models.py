@@ -12,7 +12,6 @@ class Auction(models.Model):
     title = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
     startingBidAmount = models.FloatField()
-    currentAmount = models.FloatField(null=True)
     userPosted = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True, blank=True)
     time = models.TimeField(auto_now=True, blank=True)

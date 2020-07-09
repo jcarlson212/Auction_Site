@@ -11,14 +11,22 @@
         <p>Category: {{ auction.category }}</p>
     {% endif %}
         <p>Description: {{auction.description}}</p>
-    {% if auction.currentAmount == null %}
+    {% if largestAmount == null %}
         <p>Starting Bid Amount: {{auction.startingBidAmount}}</p>
     {% else %}
-        <p>Current Bid Amount: {{auction.currentAmount}}</p>
+        <p>Current Bid Amount: {{ largestAmount }}</p>
     {% endif %}
     <p>Date Posted: {{auction.date}}</p>
             
     {% if user.is_authenticated and not isWatched %}
+        <form action="{% url 'bid' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ user.id }}" name="userid">
+            <input type="hidden" value="{{ auction.id }}" name="auctionid">
+            <input name="amount" type="number" step="0.01" min="{{ auction.startingBidAmount }}" placeholder="Amount">
+            <input type="submit" value="Make Bid">
+        </form>
+
         <form action="{% url 'watchlist' %}" method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ user.id }}" name="userid">
@@ -26,6 +34,14 @@
             <input type="submit" name="Add to Watchlist" value="Add to Watchlist">
         </form>
     {% elif user.is_authenticated %}
+        <form action="{% url 'bid' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" value="{{ user.id }}" name="userid">
+            <input type="hidden" value="{{ auction.id }}" name="auctionid">
+            <input name="amount" type="number" step="0.01" min="{{ auction.startingBidAmount }}" placeholder="Amount">
+            <input type="submit" value="Make Bid">
+        </form>
+
         <form action="{% url 'watchlist' %}" method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ user.id }}" name="userid">
