@@ -129,6 +129,7 @@ def listing(request, id):
     comments = Comment.objects.filter(auction=auction)
     isWatched = False
     isPoster = False
+    isWinner = False 
     if request.user.is_authenticated:
         current_user = User.objects.filter(username=request.user.username)[0]
 
@@ -146,26 +147,38 @@ def listing(request, id):
             for i in range(0, len(bids)):
                 if bids[i].amount > largest.amount:
                     largest = bids[i]
+
+            if auction.isActive == False:
+                users_bids = Bid.objects.filter(auction=auction).filter(userPosted=current_user)
+
+                if len(users_bids) > 0:
+                    for bid in users_bids:
+                        if bid.amount == largest.amount:
+                            isWinner = True
+                            break
             return render(request, "auctions/listing.html", {
                 "auction": auction,
                 "isWatched": isWatched,
                 "largestAmount": largest.amount,
                 "isPoster": isPoster,
-                "comments": comments
+                "comments": comments,
+                "isWinner": isWinner
             }) 
         
         return render(request, "auctions/listing.html", {
             "auction": auction,
             "isWatched": isWatched,
             "isPoster": isPoster,
-            "comments": comments
+            "comments": comments,
+            "isWinner": isWinner
         })
         
     return render(request, "auctions/listing.html", {
         "auction": auction,
         "isWatched": isWatched,
         "isPoster": isPoster,
-        "comments": comments
+        "comments": comments,
+        "isWinner": isWinner
     })
 
 def watchlist(request):
@@ -210,18 +223,22 @@ def bid(request):
         auctionid = request.POST["auctionid"]
         user = User.objects.get(id=userid)
         auction = Auction.objects.get(id=auctionid)
-        amount = request.POST["amount"]
-        bids = Bid.objects.filter(auction=auction)
-        if auction.startingBidAmount > float(amount):
-            return HttpResponse("Error: Bid not larger than starting bid")
-        if len(bids) > 0:
-            for bid in bids:
-                if bid.amount >= float(amount):
-                    return HttpResponse("Error: Bid not larger than the current bid")
-        
-        newBid = Bid(userPosted=user, amount=amount, auction=auction)
-        newBid.save()
-        return HttpResponse("New bid made")
+
+        if auction.isActive:
+            amount = request.POST["amount"]
+            bids = Bid.objects.filter(auction=auction)
+            if auction.startingBidAmount > float(amount):
+                return HttpResponse("Error: Bid not larger than starting bid")
+            if len(bids) > 0:
+                for bid in bids:
+                    if bid.amount >= float(amount):
+                        return HttpResponse("Error: Bid not larger than the current bid")
+            
+            newBid = Bid(userPosted=user, amount=amount, auction=auction)
+            newBid.save()
+            return HttpResponse("New bid made")
+        else:
+            return HttpResponse("Auction is closed. No more bids are accepted")
     else:
         return HttpResponse("page does not exist")
 

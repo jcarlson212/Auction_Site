@@ -1,7 +1,9 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
+    {% if isWinner %}
+    <h1>You won this auction!</h1>
+    {% endif %}
 
     <h2>{{auction.title}}</h2>
     {% if auction.imageURL != null %}
