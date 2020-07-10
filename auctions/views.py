@@ -10,8 +10,22 @@ from .models import User, Auction, Bid, Comment, WatchListEntry, Comment, Catego
 
 def index(request):
     auctions = sorted(Auction.objects.filter(isActive=True), key=lambda auction: auction.time, reverse=True)
+    
+    auction_price = []
+    for auction in auctions:
+        bids = Bid.objects.filter(auction=auction)
+        if len(bids) == 0:
+            auction_price.append([auction, auction.startingBidAmount])
+        else:
+            largest = bids[0]
+            for bid in bids:
+                if bid.amount > largest.amount:
+                    largest = bid
+            auction_price.append([auction, largest.amount])
+
+
     return render(request, "auctions/index.html", {
-        "auctions": auctions
+        "auction_price": auction_price
     })
 
 
@@ -249,9 +263,19 @@ def watchlist(request):
             for w in watched:
                 auctions.append(w.auction)
             auctions = sorted(auctions, key=lambda auction: auction.time, reverse=True)
-            
+            auction_price = []
+            for auction in auctions:
+                bids = Bid.objects.filter(auction=auction)
+                if len(bids) == 0:
+                    auction_price.append([auction, auction.startingBidAmount])
+                else:
+                    largest = bids[0]
+                    for bid in bids:
+                        if bid.amount > largest.amount:
+                            largest = bid
+                    auction_price.append([auction, largest.amount])
             return render(request, "auctions/watchlist.html", {
-                "auctions": auctions
+                "auction_price": auction_price
             })
         else:
             return HttpResponse("User not signed in...")

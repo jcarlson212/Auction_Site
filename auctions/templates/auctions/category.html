@@ -8,7 +8,9 @@
         <li>
             <h5><a href="{% url 'listing' auction.id %}">{{auction.title}}</a></h5>
             {% if auction.imageURL != null %}
-                <img src={{auction.imageURL}}>
+                <div style="max-width: 400px" >
+                    <img src={{auction.imageURL}} style="max-width:100%;" />
+                </div>
             {% endif %}
             {% if auction.category != null %}
                 <p>Category: {{ auction.category }}</p>

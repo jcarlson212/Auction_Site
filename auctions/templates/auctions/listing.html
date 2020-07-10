@@ -7,7 +7,9 @@
 
     <h2>{{auction.title}}</h2>
     {% if auction.imageURL != null %}
-        <img src={{auction.imageURL}}>
+        <div style="max-width: 400px" >
+            <img src={{auction.imageURL}} style="max-width:100%;" />
+        </div>
     {% endif %}
     {% if auction.category != null %}
         <p>Category: {{ auction.category }}</p>
@@ -31,60 +33,68 @@
     <hr>
 
     {% if user.is_authenticated %}
-        <form action="{% url 'comment' %}" method="post">
+        <form style="margin-top: 10px;" action="{% url 'comment' %}" method="post">
             {% csrf_token %}
+            
             <input type="hidden" value="{{ user.id }}" name="userid">
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
-            <textarea name="comment">Comment...</textarea>
-            <input type="submit" value="Add Comment">
+            <div class="form-group">
+                <textarea class="form-control" name="comment">Comment...</textarea>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Add Comment">
         </form>
     {% endif %}
             
     {% if user.is_authenticated and not isWatched %}
-        <form action="{% url 'bid' %}" method="post">
+        <form style="margin-top: 10px;" action="{% url 'bid' %}" method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ user.id }}" name="userid">
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
-            <input name="amount" type="number" step="0.01" min="{{ auction.startingBidAmount }}" placeholder="Amount">
-            <input type="submit" value="Make Bid">
+            
+            <div class="form-group">
+                <input class="form-control" name="amount" type="number" step="0.01" min="{{ auction.startingBidAmount }}" placeholder="Amount">
+            </div>
+            <input class="btn btn-primary" type="submit" value="Make Bid">
         </form>
 
-        <form action="{% url 'watchlist' %}" method="post">
+        <form style="margin-top: 20px;" action="{% url 'watchlist' %}" method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ user.id }}" name="userid">
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
-            <input type="submit" name="Add to Watchlist" value="Add to Watchlist">
+            <input class="btn btn-primary" type="submit" name="Add to Watchlist" value="Add to Watchlist">
         </form>
 
         {% if isPoster %}
-            <form action="{% url 'close' %}" method="post">
+            <form style="margin-top: 20px;" action="{% url 'close' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" value="{{ user.id }}" name="userid">
                 <input type="hidden" value="{{ auction.id }}" name="auctionid">
-                <input type="submit" name="Close" value="Close">
+                <input class="btn btn-primary" type="submit" name="Close" value="Close">
             </form>
         {% endif %}
     {% elif user.is_authenticated %}
-        <form action="{% url 'bid' %}" method="post">
+        <form style="margin-top: 10px;" action="{% url 'bid' %}" method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ user.id }}" name="userid">
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
-            <input name="amount" type="number" step="0.01" min="{{ auction.startingBidAmount }}" placeholder="Amount">
-            <input type="submit" value="Make Bid">
+            <div class="form-group">
+                <input class="form-control" name="amount" type="number" step="0.01" min="{{ auction.startingBidAmount }}" placeholder="Amount">
+            </div>
+            <input class="btn btn-primary" type="submit" value="Make Bid">
         </form>
 
-        <form action="{% url 'watchlist' %}" method="post">
+        <form style="margin-top: 20px;" action="{% url 'watchlist' %}" method="post">
             {% csrf_token %}
             <input type="hidden" value="{{ user.id }}" name="userid">
             <input type="hidden" value="{{ auction.id }}" name="auctionid">
-            <input type="submit" name="Remove from Watchlist" value="Remove from Watchlist">
+            <input class="btn btn-primary" type="submit" name="Remove from Watchlist" value="Remove from Watchlist">
         </form>
         {% if isPoster %}
-            <form action="{% url 'close' %}" method="post">
+            <form style="margin-top: 20px;" action="{% url 'close' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" value="{{ user.id }}" name="userid">
                 <input type="hidden" value="{{ auction.id }}" name="auctionid">
-                <input type="submit" name="Close" value="Close">
+                <input class="btn btn-primary" type="submit" name="Close" value="Close">
             </form>
         {% endif %}
     {% else %}

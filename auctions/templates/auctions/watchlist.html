@@ -4,22 +4,20 @@
     <h2>Watchlist</h2>
 
     <ul>
-        {% for auction in auctions %}
+        {% for pair in auction_price %}
         <li>
-            <h5><a href="{% url 'listing' auction.id %}">{{auction.title}}</a></h5>
-            {% if auction.imageURL != null %}
-                <img src={{auction.imageURL}}>
+            <h5><a href="{% url 'listing' pair.0.id %}">{{pair.0.title}}</a></h5>
+            {% if pair.0.imageURL != null %}
+                <div style="max-width: 400px" >
+                    <img src={{pair.0.imageURL}} style="max-width:100%;" />
+                </div>
             {% endif %}
-            {% if auction.category != null %}
-                <p>Category: {{ auction.category }}</p>
+            {% if pair.0.category != null %}
+                <p>Category: {{ pair.0.category }}</p>
             {% endif %}
-                <p>Description: {{auction.description}}</p>
-            {% if auction.currentAmount == null %}
-                <p>Starting Bid Amount: {{auction.startingBidAmount}}</p>
-            {% else %}
-                <p>Current Bid Amount: {{auction.currentAmount}}</p>
-            {% endif %}
-            <p>Date Posted: {{auction.date}}</p>
+                <p>Description: {{pair.0.description}}</p>
+                <p>Current Bid Amount: {{pair.1}}</p>
+            <p>Date Posted: {{pair.0.date}}</p>
             
         </li>
         {% empty %}
