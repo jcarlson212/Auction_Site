@@ -153,6 +153,14 @@ def createListing(request):
 
     return render(request, "auctions/createListing.html")
 
+def category(request, name):
+    c = Category.objects.filter(name=name)[0]
+    auctions = sorted(Auction.objects.filter(category=c.name), key=lambda auction: auction.time, reverse=True)
+    return render(request, "auctions/category.html",{
+        "category": c,
+        "auctions": auctions
+    })
+
 def listing(request, id):
     auction = Auction.objects.get(id=id)
     comments = Comment.objects.filter(auction=auction)
