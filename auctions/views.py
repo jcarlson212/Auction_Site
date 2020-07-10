@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import User, Auction, Bid, Comment, WatchListEntry, Comment, Category
 
@@ -71,6 +72,7 @@ def categories(request):
         "categories": categories
     })
 
+@login_required
 def comment(request):
     if request.method == "POST":
         userid = request.POST["userid"]
@@ -161,6 +163,7 @@ def category(request, name):
         "auctions": auctions
     })
 
+
 def listing(request, id):
     auction = Auction.objects.get(id=id)
     comments = Comment.objects.filter(auction=auction)
@@ -218,6 +221,7 @@ def listing(request, id):
         "isWinner": isWinner
     })
 
+@login_required
 def watchlist(request):
     if request.method == "POST":
         userid = request.POST["userid"]
@@ -254,6 +258,7 @@ def watchlist(request):
     else:
         return HttpResponse("page does not exist")
 
+@login_required
 def bid(request):
     if request.method == "POST":
         userid = request.POST["userid"]
@@ -279,6 +284,7 @@ def bid(request):
     else:
         return HttpResponse("page does not exist")
 
+@login_required
 def close(request):
     if request.method == "POST":
         userid = request.POST["userid"]
