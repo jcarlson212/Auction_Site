@@ -43,3 +43,7 @@ class Comment(models.Model):
     def __str__(self):
         return "comment: " + self.comment + ", " + str(self.date)
 
+class Category(models.Model):
+    name = models.CharField(max_length=30, primary_key=True)
+    def __str__(self):
+        return self.name

@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Auction, Bid, Comment, WatchListEntry, Comment
+from .models import User, Auction, Bid, Comment, WatchListEntry, Comment, Category
 
 
 def index(request):
@@ -65,6 +65,12 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+def categories(request):
+    categories = Category.objects.all()
+    return render(request, "auctions/categories.html", {
+        "categories": categories
+    })
+
 def comment(request):
     if request.method == "POST":
         userid = request.POST["userid"]
@@ -97,6 +103,16 @@ def createListing(request):
                         imageURL= request.POST["imageURL"],
                         category=request.POST["category"]
                     )
+                    #see if we add the category
+                    categories = Category.objects.all()
+                    doNotAdd = False
+                    for c in categories:
+                        if c.name == auction.category:
+                            doNotAdd = True
+                    if not doNotAdd:
+                        #add the category
+                        newC = Category(name=auction.category)
+                        newC.save()
                 else:
                     auction = Auction(
                         title=request.POST["title"],
@@ -114,9 +130,22 @@ def createListing(request):
                     userPosted=current_user,
                     category=request.POST["category"]
                 )
+                #see if we add the category
+                categories = Category.objects.all()
+                doNotAdd = False
+                for c in categories:
+                    if c.name == auction.category:
+                        doNotAdd = True
+                if not doNotAdd:
+                    #add the category
+                    newC = Category(name=auction.category)
+                    newC.save()
 
 
             auction.save()
+
+                
+
             print(Auction.objects.all())
             return HttpResponse("success")
         else:
